@@ -8,7 +8,9 @@ from tqdm import tqdm
 
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 #### too much headach running multiple job on GPU so...
-os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+if not 'MODEL_RUN_EVALUATE' in os.environ:
+    os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
 import tensorflow as tf
 from sklearn.model_selection import train_test_split
 
@@ -223,24 +225,29 @@ class ChromosomeExpressedModel_Parallel(mp.Process):
         self.incompatable_model=False
         return True
 
-    def test_model(self, _epoch):
+    def test_model(self, _epoch, on_train=True):
         if self.incompatable_model:
             return 0
 
         try:
-            # self.model.summary()
-            tqdm_text = "job#" + "{}".format(self.job_id).zfill(3)
+            if on_train:
+                tqdm_text = "job#" + "{}".format(self.job_id).zfill(3)
 
-            with tqdm(total=_epoch+1, desc=tqdm_text, position=self.index+1) as pbar:
-                self.model.fit(self.x_train, self.y_train,
-                                epochs=_epoch,
-                                callbacks=[ProgressCallback(pbar)],
-                                verbose=0)
+                with tqdm(total=_epoch+1, desc=tqdm_text, position=self.index+1) as pbar:
+                    self.model.fit(self.x_train, self.y_train,
+                                    epochs=_epoch,
+                                    callbacks=[ProgressCallback(pbar)],
+                                    verbose=0)
 
-                result = self.model.evaluate(self.x_test, self.y_test,
-                                            verbose=0)
-                pbar.update(1)
+                    result = self.model.evaluate(self.x_test, self.y_test,
+                                                verbose=0)
+                    pbar.update(1)
+            else:
+                self.model.summary()
 
+                self.model.fit(self.x_train, self.y_train, epochs=_epoch)
+
+                result = self.model.evaluate(self.x_test, self.y_test)
 
             self.result = result[1]
             return result[1]

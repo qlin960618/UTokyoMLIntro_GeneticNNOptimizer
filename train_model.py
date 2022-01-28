@@ -1,11 +1,11 @@
 from ModelHelper import *
 
 
-import tensorflow as tf
-from sklearn.model_selection import train_test_split
+import tensorflow.keras.datasets as tf_datasets
+# from sklearn.model_selection import train_test_split
 import numpy as np
 import math, random
-import scipy.io as scio
+# import scipy.io as scio
 import pickle, copy
 
 import multiprocessing as mp
@@ -18,13 +18,13 @@ _train_test_ratio = 0.8
 Trial=1
 #model history
 POPULATION_HISTORY_PATH="./history/{:2d}_population_history.csv".format(Trial)
-SAVE_NAME="./history/{:2d}_run_checkpoint.p".format(Trial)
+CHECKPOINT_SAVE_PATH="./history/{:2d}_run_checkpoint.p".format(Trial)
 
-# _N_GENERATION = 30
-_N_GENERATION = 500
-_MUTATE_SIZE=12
+# _n_generation = 30
+_n_generation = 500
+_mutate_size=12
 
-_TEST_EPOCH_DEPTH=3
+_test_epoch_depth=3
 
 _mp_worker_size=3
 # _population_size=16
@@ -47,10 +47,11 @@ def process_population_fitness(population,
 
 
 def main():
-
-
-    fashion_mnist = tf.keras.datasets.fashion_mnist
-    (x_train, y_train), (x_val, y_val) = fashion_mnist.load_data()
+    ###################
+    ## Load dataset
+    ###################
+    # fashion_mnist = tf_datasets.fashion_mnist
+    (x_train, y_train), (x_val, y_val) = tf_datasets.fashion_mnist.load_data()
     x_train, x_val = x_train/255.0, x_val/255.0
 
     x_train=np.expand_dims(x_train, axis=3)
@@ -59,8 +60,10 @@ def main():
     # x_val, x_val, y_val, y_val = train_test_split(x_val, y_val,
     #                                             test_size=1-_validation_ratio,
     #                                             random_state=_SEED)
-
-    evoManager = EvolutionManager(epoch_depth = _TEST_EPOCH_DEPTH,
+    ###################
+    ## create Evolution Manager Class
+    ###################
+    evoManager = EvolutionManager(epoch_depth = _test_epoch_depth,
                                 mp_worker_size = _mp_worker_size,
                                 population_size = _population_size)
     evoManager.load_history(POPULATION_HISTORY_PATH)
@@ -76,7 +79,7 @@ def main():
     # evoManager.set_test_data(x_val=x_val, y_val=y_val)
 
     #load from checkpoit if exist
-    if not os.path.isfile(SAVE_NAME):
+    if not os.path.isfile(CHECKPOINT_SAVE_PATH):
         print("generate initial population")
         population = []
         population_fitness_history=[]
@@ -87,7 +90,7 @@ def main():
         print(population)
     else:
         print("checkpoint exist, loading from save")
-        data=load_data_log(SAVE_NAME)
+        data=load_data_log(CHECKPOINT_SAVE_PATH)
         population_fitness_history = data['fitness_history']
         gene_init = data['generation']
         population = data['population']
@@ -96,14 +99,14 @@ def main():
 
 
     print("iterate generation")
-    for generation in range(gene_init, _N_GENERATION+gene_init):
+    for generation in range(gene_init, _n_generation+gene_init):
         random.seed(_SEED+generation)
         population_fitness = evoManager.process_population_fitness(population)
         last_population=copy.deepcopy(population)
 
         fit_sort_arg = np.argsort(population_fitness)
-        fit_index = fit_sort_arg[::-1][:_MUTATE_SIZE]
-        unfit_index = fit_sort_arg[:_MUTATE_SIZE]
+        fit_index = fit_sort_arg[::-1][:_mutate_size]
+        unfit_index = fit_sort_arg[:_mutate_size]
 
         #mutate the best fits
         childs=[]
@@ -126,7 +129,7 @@ def main():
                 'generation':generation,
                 'population':last_population,
             }
-            save_data_log(SAVE_NAME, save_data)
+            save_data_log(CHECKPOINT_SAVE_PATH, save_data)
 
     print("Evolution end at generation {:d}".format(generation))
     print("Current Population:", population)
@@ -137,7 +140,7 @@ def main():
         'generation':generation,
         'population':last_population,
     }
-    save_data_log(SAVE_NAME, save_data)
+    save_data_log(CHECKPOINT_SAVE_PATH, save_data)
 
 def save_data_log(path, data):
     pickle.dump( data, open( path, "wb" ) )
