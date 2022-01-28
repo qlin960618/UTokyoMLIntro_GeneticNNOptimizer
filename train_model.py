@@ -17,8 +17,8 @@ _train_test_ratio = 0.8
 
 Trial=1
 #model history
-POPULATION_HISTORY_PATH="./history/{:2d}_population_history.csv".format(Trial)
-CHECKPOINT_SAVE_PATH="./history/{:2d}_run_checkpoint.p".format(Trial)
+POPULATION_HISTORY_PATH="./history/{:d}_population_history.csv".format(Trial)
+CHECKPOINT_SAVE_PATH="./history/{:d}_run_checkpoint.p".format(Trial)
 
 # _n_generation = 30
 _n_generation = 500
@@ -26,7 +26,7 @@ _mutate_size=12
 
 _test_epoch_depth=3
 
-_mp_worker_size=3
+_mp_worker_size=8
 # _population_size=16
 _population_size=30
 

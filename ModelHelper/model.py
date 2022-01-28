@@ -60,7 +60,6 @@ class ChromosomeExpressedModel_Serial():
                                                     test_size=train_ratio,
                                                     random_state=self.seed)
 
-
     def build_model(self, input_shape, output_shape, output_activation, validate_only=False):
 
         layers=[]
@@ -160,10 +159,6 @@ class ChromosomeExpressedModel_Parallel(mp.Process):
         self.x_train, self.x_test, self.y_train, self.y_test = train_test_split(self.x_train, self.y_train,
                                                     test_size=train_ratio,
                                                     random_state=self.seed)
-
-    def supress_stdout(self):
-        sys.stdout = open(os.devnull, 'w')
-
 
     def build_model(self, input_shape=None, validate_only=False):
         if input_shape is None:
