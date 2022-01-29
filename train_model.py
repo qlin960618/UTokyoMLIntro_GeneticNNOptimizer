@@ -17,8 +17,8 @@ _train_test_ratio = 0.8
 
 Trial=1
 #model history
-POPULATION_HISTORY_PATH="./history/{:d}_population_history.csv".format(Trial)
-CHECKPOINT_SAVE_PATH="./history/{:d}_run_checkpoint.p".format(Trial)
+POPULATION_HISTORY_PATH="./history/{0:02d}_population_history.csv".format(Trial)
+CHECKPOINT_SAVE_PATH="./history/{0:02d}_run_checkpoint.p".format(Trial)
 
 # _n_generation = 30
 _n_generation = 500
