@@ -6,6 +6,7 @@
   * [Contents:](#contents)
      * [train_model.py](#train_modelpy)
      * [evaluate_model.py](#evaluate_modelpy)
+     * [plot_training_history.py](#plot_training_historypy)
      * [ModelHelper](#modelhelper)
         * [chromosome_helper.py](#chromosome_helperpy)
         * [model.py](#modelpy)
@@ -39,7 +40,15 @@ The handling of the generation to generation evolution is done here with only fe
 
 This script will evaluate the training result from the checkpoint of the training script. It takes the last best chromosome of the last generation and evaluate it normally like conventionally how NN model architecture is evaluated.
 
+### [plot_training_history.py](./plot_training_history.py)
+
+This script will plot the history of the training from checkpoint and saved data. 
+
+*For posprocessing* 
+
 ### [ModelHelper](./ModelHelper)
+
+Directory and python library for providing some basic functionalty to all scripts used in this project.
 
 #### [chromosome_helper.py](./ModelHelper/chromosome_helper.py)
 
