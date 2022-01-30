@@ -25,7 +25,8 @@
 Neural Network (NN) Model architecture optimization using Genetic Algorithm
 
 *by qlin960618 (Quentin Lin)*
-contact: qlin1806@g.ecc.u-tokyo.ac.jp
+
+**contact:** qlin1806@g.ecc.u-tokyo.ac.jp
 
 ## Contents:
 
